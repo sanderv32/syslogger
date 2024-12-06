@@ -49,7 +49,6 @@ struct Cli {
 
 fn main() {
     let cli = Cli::parse();
-    let logger: Result<Logger<LoggerBackend, Formatter3164>, syslog::Error>;
     let facility = Facility::from_str(cli.facility.unwrap_or("user".to_string()).as_str());
     if facility.is_err() {
         println!("Invalid facility");
@@ -63,11 +62,11 @@ fn main() {
     };
     let server = format!("{}:{}", cli.ip, cli.port);
 
-    if !cli.udp {
-        logger = syslog::tcp(formatter, server);
+    let logger: Result<Logger<LoggerBackend, Formatter3164>, syslog::Error> = if !cli.udp {
+        syslog::tcp(formatter, server)
     } else {
-        logger = syslog::udp(formatter, "0.0.0.0:0", &server);
-    }
+        syslog::udp(formatter, "0.0.0.0:0", &server)
+    };
 
     if let Err(e) = logger {
         println!("Failed to connect to syslog server: {}", e);
