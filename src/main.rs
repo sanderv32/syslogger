@@ -3,8 +3,8 @@ extern crate syslog;
 use std::process;
 use std::str::FromStr;
 
+use clap::builder::styling::{AnsiColor, Effects, Styles};
 use clap::Parser;
-use clap::builder::styling::{AnsiColor, Styles, Effects};
 use syslog::{Facility, Formatter3164, Logger, LoggerBackend};
 
 fn styles() -> Styles {
@@ -46,7 +46,6 @@ struct Cli {
     #[clap(index = 1)]
     message: Option<String>,
 }
-
 
 fn main() {
     let cli = Cli::parse();
