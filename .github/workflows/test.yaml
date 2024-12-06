@@ -1,0 +1,83 @@
+name: Test
+
+on:
+  push:
+  pull_request:
+    branches:
+      - main
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          override: true
+          default: true
+
+      - name: Check Formatting
+        uses: actions-rs/cargo@v1
+        with:
+          command: fmt
+          args: -- --check
+
+      - name: Check with Clippy
+        uses: actions-rs/clippy-check@v1
+        with:
+          args: -- -Dwarnings
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Shellcheck
+        uses: ludeeus/action-shellcheck@master
+
+      - name: Install shfmt
+        uses: mfinelli/setup-shfmt@master
+
+      - name: Run shfmt
+        run: shfmt -d bin/*
+
+  build:
+    name: ${{ matrix.triple.toolchain }} / ${{ matrix.triple.target }} / ${{ matrix.toolchain }}
+    runs-on: ${{ matrix.triple.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        toolchain: [stable, beta, nightly]
+        triple:
+          - os: ubuntu-latest
+            target: x86_64-unknown-linux-gnu
+            cross: false
+          - os: ubuntu-latest
+            target: x86_64-unknown-linux-musl
+            cross: false
+          - os: macos-latest
+            target: x86_64-apple-darwin
+            cross: false
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Install toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: ${{ matrix.toolchain }}
+          target: ${{ matrix.triple.target }}
+          override: true
+          default: true
+
+      - name: Build
+        uses: actions-rs/cargo@v1
+        with:
+          command: build
+          args: --release --all-features --target ${{ matrix.triple.target }}

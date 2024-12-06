@@ -1,0 +1,10 @@
+[package]
+name = "syslogger"
+version = "0.0.0-git"
+edition = "2021"
+authors = ["Alexander Verhaar <sanderv32@gmail.com>"]
+
+[dependencies]
+syslog = "7.0.0"
+clap = { version = "4.5", features = ["derive"] }
+
