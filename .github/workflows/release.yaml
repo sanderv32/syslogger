@@ -10,13 +10,13 @@ jobs:
       matrix:
         include:
           - os: ubuntu-latest
-            asset_name: action-validator_linux_amd64
+            asset_name: syslogger_linux_amd64
             target: x86_64-unknown-linux-gnu
           - os: ubuntu-latest
-            asset_name: action-validator_linux_musl_amd64
+            asset_name: syslogger_linux_musl_amd64
             target: x86_64-unknown-linux-musl
           - os: macos-latest
-            asset_name: action-validator_darwin_amd64
+            asset_name: syslogger_darwin_amd64
             target: x86_64-apple-darwin
 
     runs-on: ${{ matrix.os }}
@@ -50,5 +50,5 @@ jobs:
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           tag: ${{ github.ref }}
-          file: target/${{ matrix.target }}/release/action-validator
+          file: target/${{ matrix.target }}/release/syslogger
           asset_name: ${{ matrix.asset_name }}
