@@ -43,7 +43,7 @@ jobs:
         uses: actions-rs/cargo@v1
         with:
           command: build
-          args: --release --locked --target ${{ matrix.target }}
+          args: --release --target ${{ matrix.target }}
 
       - name: Upload
         uses: svenstaro/upload-release-action@v2
